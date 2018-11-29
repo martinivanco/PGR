@@ -3,13 +3,13 @@
 // Color format: (r, g, b) where each component is between 0 (darkest) and 1 (brightest).
 
 // !REQUIRED! camera (eye_origin) (viewplane_origin) (viewplane_width) (viewplane_height)
-camera (0, 0, 10) (0, 15, 0) 18 12
+camera (0, -20, 5) (0, -10, 0) 18 12
 
 // ambient (ambient_color)
 ambient (1, 1, 1)
 
 // light (origin) (color) intensity radius
-light (2.5, 10, 5) (1, 1, 1) 7 0.2
+light (5, 0, 2) (1, 1, 1) 7 0.2
 
 // material material_name (diffuse_color) (reflection_color) (specular_color) kAmbient kDiffuse kOcclusion kReflection kSpecular shininess
 material mat (1, 1, 1) (1, 1, 1) (1, 1, 1) 0.01 1.0 0.02 0.3 1.0 50
@@ -18,24 +18,24 @@ material mat3 (1, 0.1, 0.1) (1, 1, 1) (1, 1, 1) 0.01 1.0 0.02 0.3 1.0 50
 material mat4 (0.1, 1, 0.1) (1, 1, 1) (1, 0.1, 1) 0.01 1.0 0.02 0.3 1.0 50
 
 // sphere (origin) radius material_name
-sphere (-5, 10, 1) 1 mat
+// sphere (0, 0, 2) 1 mat
 // sphere (-2.5, 10, 1) 1 mat4
-sphere (0, 15, 1) 1 mat
-sphere (4.5, 13.5, 1) 1 mat
-sphere (5, 10, 1) 1 mat3
+// sphere (0, 15, 1) 1 mat
+// sphere (4.5, 13.5, 1) 1 mat
+// sphere (5, 10, 1) 1 mat3
 
 // quadric (origin) (parameters) type_id material_name
-quadric (-2.5, 10, 1) (1, 2, 0.5) 1 mat4
+quadric (0, 0, 0.5) (2, 2, 1) 2 mat
 
 // plane (origin) (normal_unit_vector) material_name
 plane (0, 0, 0) (0, 0, 1) mat
 
 // triangle (point0) (point1) (point2) material_name
-triangle (0.8, 14, 3) (1.5, 13, 0) (3, 14, 1.5)  mat
-triangle (2.8, 10, 3) (3.5, 9, 0) (5 , 10, 1.5) mat2
+// triangle (0.8, 14, 3) (1.5, 13, 0) (3, 14, 1.5)  mat
+// triangle (2.8, 10, 3) (3.5, 9, 0) (5 , 10, 1.5) mat2
 
 // qualityparams max_reflections softlight_quality occlusion_quality
-qualityparams 1 5 5
+qualityparams 2 10 10
 
 // render width height outfile
 render 900 600 sample_scene.png
