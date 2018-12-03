@@ -39,6 +39,18 @@ bool Scene::getFirstObject(Ray ray, SceneObject** object, Intersection* intersec
   return found;
 }
 
+Color Scene::getHeightColor(V3 p) {
+  if (p.z() < -camera_->bounding_box_range_) {
+    return Color(0, 0, 1);
+  } else if (p.z() < 0.0) {
+    return Color(0, 1.0 - (p.z() / (-camera_->bounding_box_range_)), p.z() / (-camera_->bounding_box_range_));
+  } else if (p.z() < camera_->bounding_box_range_) {
+    return Color(p.z() / camera_->bounding_box_range_, 1.0 - (p.z() / camera_->bounding_box_range_), 0);;
+  } else {
+    return Color(1, 0, 0);
+  }
+}
+
 Color Scene::trace(Ray ray, int reflection_count) {
   Color result(0, 0, 0);
   if (reflection_count > max_reflections_)
@@ -54,7 +66,18 @@ Color Scene::trace(Ray ray, int reflection_count) {
   material = object->material_;
 
   // Calculate ambient
-  Color ambient = ambient_ * material->kAmbient;
+  Color ambient;
+  switch (material->type) {
+    case 1:
+      result = getHeightColor(intersection.contact_coord_) * material->kAmbient;
+      result.clamp();
+      return result;
+    case 2:
+      break;
+    default:
+      ambient = ambient_ * material->kAmbient;
+      break;
+  }
 
   // Calculate diffuse and specular
   Color diffuse(0, 0, 0);

@@ -50,6 +50,7 @@ void initSceneFromFile(std::istream& file, Scene* scene, int* width, int* height
       readTo(file, &scene->camera_->plane_center_coord_);
       readTo(file, &scene->camera_->plane_width_);
       readTo(file, &scene->camera_->plane_height_);
+      readTo(file, &scene->camera_->bounding_box_range_);
     }
     else if (directive == "light") {
       Light* light = new Light();
@@ -95,7 +96,7 @@ void initSceneFromFile(std::istream& file, Scene* scene, int* width, int* height
       readTo(file, &params);
       file >> type;
       file >> material_name;
-      scene->objects_.push_back(new Quadric(origin, params, type, materials[material_name]));
+      scene->objects_.push_back(new Quadric(origin, params, type, materials[material_name], scene->camera_->bounding_box_range_));
     }
     else if (directive == "material") {
       Material* material = new Material();
@@ -110,6 +111,7 @@ void initSceneFromFile(std::istream& file, Scene* scene, int* width, int* height
       readTo(file, &material->kReflection);
       readTo(file, &material->kSpecular);
       readTo(file, &material->shininess);
+      readTo(file, &material->type);
       materials[material_name] = material;
     }
     else if (directive == "render") {

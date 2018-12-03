@@ -54,6 +54,7 @@ struct Intersection {
 
 struct Material {
   float kAmbient, kDiffuse, kOcclusion, kReflection, kSpecular, shininess;
+  int type;
   Color cDiffuse, cReflection, cSpecular;
 };
 
@@ -62,6 +63,7 @@ struct Camera {
   V3 plane_center_coord_;
   float plane_width_;
   float plane_height_;
+  float bounding_box_range_;
 };
 
 class SceneObject {

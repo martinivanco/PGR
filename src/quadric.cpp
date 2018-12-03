@@ -1,8 +1,8 @@
 #include "quadric.h"
 #include "stdio.h"
 
-Quadric::Quadric(V3 origin_coord, V3 param_vec, int quadric_type, Material* material)
-    : origin_coord_(origin_coord), param_vec_(param_vec), quadric_type_(quadric_type) {
+Quadric::Quadric(V3 origin_coord, V3 param_vec, int quadric_type, Material* material, float bounding_box_range)
+    : origin_coord_(origin_coord), param_vec_(param_vec), quadric_type_(quadric_type), bounding_box_range_(bounding_box_range) {
   material_ = material;
 }
    
@@ -49,22 +49,25 @@ Intersection Quadric::intersect(Ray ray) {
     float sD = sqrt(D);
     float t1 = (-bx + sD) / (2 * ax);
     float t2 = (-bx - sD) / (2 * ax);
-    float t = -1;
-    if (t1 > 0 && t2 > 0)
-      t = t1 > t2 ? t2 : t1;
-    else
-      t = t1 > 0 ? t1 : t2;
+
+    // Choose correct t
+    float t = t1 < t2 ? t1 : t2;
+    if (t <= 0 || !check_bounding_box(ray.origin_coord_ + ray.direction_unit_vec_ * t)) {
+      t = t == t1 ? t2 : t1;
+    }
 
     if (t > 0) {
       V3 hitpoint = ray.origin_coord_ + ray.direction_unit_vec_ * t;
-      V3 normal = V3((hitpoint.x() - origin_coord_.x()) / (param_vec_.x() * param_vec_.x()), \
-                     (hitpoint.y() - origin_coord_.y()) / (param_vec_.y() * param_vec_.y()), \
-                     (hitpoint.z() - origin_coord_.z()) / (param_vec_.z() * param_vec_.z()));
-
-      intersection.happened_ = true;
-      intersection.contact_coord_ = hitpoint;
-      intersection.normal_unit_vec_ = normal.unit();
+      if (check_bounding_box(hitpoint)) {
+        V3 normal = V3((hitpoint.x() - origin_coord_.x()) / (param_vec_.x() * param_vec_.x()), \
+                       (hitpoint.y() - origin_coord_.y()) / (param_vec_.y() * param_vec_.y()), \
+                       (hitpoint.z() - origin_coord_.z()) / (param_vec_.z() * param_vec_.z()));
+        intersection.happened_ = true;
+        intersection.contact_coord_ = hitpoint;
+        intersection.normal_unit_vec_ = normal.unit();
+      }
     }
+
   }
 
   return intersection;
@@ -108,4 +111,10 @@ void Quadric::count_eq_type2(Ray ray, int e1, int e2, int e3, float *ax, float *
   *cx = (ray.origin_coord_.x() * ray.origin_coord_.x() + origin_coord_.x() * origin_coord_.x() - 2 * ray.origin_coord_.x() * origin_coord_.x()) * b2 + \
         (ray.origin_coord_.y() * ray.origin_coord_.y() + origin_coord_.y() * origin_coord_.y() - 2 * ray.origin_coord_.y() * origin_coord_.y()) * a2 * e1 + \
         (ray.origin_coord_.z() - origin_coord_.z()) * ab2 * e2 - ab2 * e3;
+}
+
+bool Quadric::check_bounding_box(V3 p) {
+  return p.x() > -bounding_box_range_ && p.x() < bounding_box_range_ && \
+         p.y() > -bounding_box_range_ && p.y() < bounding_box_range_ && \
+         p.z() > -bounding_box_range_ && p.z() < bounding_box_range_;
 }
