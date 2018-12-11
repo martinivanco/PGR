@@ -16,7 +16,7 @@ struct Ray {
 
 class Color {
  public:
-  Color(float r, float g, float b)
+  Color(float b, float g, float r)
       : r_(r), g_(g), b_(b) {}
   Color() : r_(0), g_(0), b_(0) {}
 

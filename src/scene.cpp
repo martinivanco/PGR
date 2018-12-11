@@ -40,14 +40,26 @@ bool Scene::getFirstObject(Ray ray, SceneObject** object, Intersection* intersec
 }
 
 Color Scene::getHeightColor(V3 p) {
-  if (p.z() < -camera_->bounding_box_range_) {
-    return Color(0, 0, 1);
+  /*if (p.z() < -camera_->bounding_box_range_) {
+    return Color(0.25, 0.5, 1.0);
   } else if (p.z() < 0.0) {
-    return Color(0, 1.0 - (p.z() / (-camera_->bounding_box_range_)), p.z() / (-camera_->bounding_box_range_));
+    return Color(0.25, 1.0 - ((-p.z()) / camera_->bounding_box_range_ / 2.0), (-p.z()) / camera_->bounding_box_range_ / 2.0 + 0.5);
   } else if (p.z() < camera_->bounding_box_range_) {
-    return Color(p.z() / camera_->bounding_box_range_, 1.0 - (p.z() / camera_->bounding_box_range_), 0);;
+    return Color(p.z() / camera_->bounding_box_range_ / 4.0 * 3.0 + 0.25, 1.0, 0.5);;
   } else {
-    return Color(1, 0, 0);
+    return Color(1.0, 1.0, 0.5);
+  }*/
+  float h = p.z();
+  float r = camera_->bounding_box_range_;
+
+  if (h < -r) {
+    return Color(1.0, 0.5, 0.25);
+  } else if (h < 0.0) {
+    return Color(0.5 + ((-h) / r / 2.0), 1.0 - ((-h) / r / 2.0), 0.25);
+  } else if (h < r) {
+    return Color(0.5, 1.0, 0.25 + (h / r / 4.0 * 3.0));
+  } else {
+    return Color(0.5, 1.0, 1.0);
   }
 }
 
