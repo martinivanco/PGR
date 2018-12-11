@@ -39,27 +39,40 @@ bool Scene::getFirstObject(Ray ray, SceneObject** object, Intersection* intersec
   return found;
 }
 
+float Scene::signAbs(float v, float s) {
+  if (v >= 0.0)
+    return v;
+  return -v + s;
+}
+
 Color Scene::getHeightColor(V3 p) {
-  /*if (p.z() < -camera_->bounding_box_range_) {
-    return Color(0.25, 0.5, 1.0);
-  } else if (p.z() < 0.0) {
-    return Color(0.25, 1.0 - ((-p.z()) / camera_->bounding_box_range_ / 2.0), (-p.z()) / camera_->bounding_box_range_ / 2.0 + 0.5);
-  } else if (p.z() < camera_->bounding_box_range_) {
-    return Color(p.z() / camera_->bounding_box_range_ / 4.0 * 3.0 + 0.25, 1.0, 0.5);;
-  } else {
-    return Color(1.0, 1.0, 0.5);
-  }*/
   float h = p.z();
   float r = camera_->bounding_box_range_;
+  float d = r / 5;
+  Color l = Color (0, 0, 0);
 
+  // if (fmod(abs(h - (r / 8)), r / 4) < 0.02 || fmod(abs(p.x()), r / 4) < 0.02)
+  //   return Color(0, 0, 0);
+  if (((int) (signAbs(p.x(), d) / d)) % 2 != ((int) (signAbs(p.y(), d) / d)) % 2)
+    l = Color(0.25, 0.25, 0.25);
+
+  // if (h < -r) {
+  //   return Color(1.0, 0.5, 0.25);
+  // } else if (h < 0.0) {
+  //   return Color(0.5 + ((-h) / r / 2.0), 1.0 - ((-h) / r / 2.0), 0.25);
+  // } else if (h < r) {
+  //   return Color(0.5, 1.0, 0.25 + (h / r / 4.0 * 3.0));
+  // } else {
+  //   return Color(0.5, 1.0, 1.0);
+  // }
   if (h < -r) {
-    return Color(1.0, 0.5, 0.25);
+    return Color(0.75, 0.25, 0.0) + l;
   } else if (h < 0.0) {
-    return Color(0.5 + ((-h) / r / 2.0), 1.0 - ((-h) / r / 2.0), 0.25);
+    return Color(0.25 + ((-h) / r / 2.0), 0.75 - ((-h) / r / 2.0), 0.0) + l;
   } else if (h < r) {
-    return Color(0.5, 1.0, 0.25 + (h / r / 4.0 * 3.0));
+    return Color(0.25, 0.75, (h / r / 4.0 * 3.0)) + l;
   } else {
-    return Color(0.5, 1.0, 1.0);
+    return Color(0.25, 0.75, 0.75) + l;
   }
 }
 
