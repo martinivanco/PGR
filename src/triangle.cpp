@@ -1,5 +1,5 @@
 #include "triangle.h"
-
+#include <stdlib.h>
 #include "scene_base.h"
 
 namespace {

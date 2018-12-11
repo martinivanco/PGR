@@ -1,4 +1,5 @@
 #include "plane.h"
+#include <stdlib.h>
 
 Plane::Plane(V3 origin_coord, V3 normal_unit_vec, Material* material)
     : origin_coord_(origin_coord), normal_unit_vec_(normal_unit_vec) {
