@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 2.6)
 project (raytracer)
+SET(CMAKE_CXX_FLAGS "-std=c++11 -O3")
 
 add_subdirectory(src/third-party/zlib)
 set(ZLIB_LIBRARY zlibstatic)
