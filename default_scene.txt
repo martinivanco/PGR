@@ -3,13 +3,13 @@
 // Color format: (r, g, b) where each component is between 0 (darkest) and 1 (brightest).
 
 // !REQUIRED! camera (eye_origin) (viewplane_origin) (viewplane_width) (viewplane_height) (bounding_box_range)
-camera (10, -25, 10) (0, 0, 0) 18 12 4.0
+camera (0, -25, 0) (0, 0, 0) 18 12 4.0
 
 // ambient (ambient_color)
 ambient (1, 1, 1)
 
 // light (origin) (color) intensity radius
-light (2.5, -6.25, 2.5) (1, 1, 1) 10 0.2
+light (0, -6.25, 0) (1, 1, 1) 10 0.2
 
 // material material_name (diffuse_color) (reflection_color) (specular_color) kAmbient kDiffuse kOcclusion kReflection kSpecular shininess type
 material qmat1 (1, 1, 1) (1, 1, 1) (1, 1, 1) 1.0 0.0 0.0 0.0 0.0 0 2

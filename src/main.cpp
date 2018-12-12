@@ -18,6 +18,7 @@
 #include "third-party/cvui/cvui.h"
 
 #define WINDOW_NAME "DQUR - Displaying quadrics using raytracing"
+#define PI 3.14159265
 
 
 int checktype(int type, bool checked1, bool checked2, bool checked3, bool checked4, bool checked5, bool checked6, bool checked7, bool checked8){
@@ -141,7 +142,7 @@ int main(int argc, const char *argv[])
   double cvalue = 2;
 
   double rotationLR = 180;
-  double rotationDU = 180;
+  double rotationDU = 90;
   double zoom = 30;
   double bboxr = 4;
 
@@ -155,7 +156,7 @@ int main(int argc, const char *argv[])
     cvui::trackbar(frame, frame.cols - 245, 45, 210, &rotationLR, (double)0.0, (double)360.0);
     cvui::text(frame, frame.cols - 30, 55, "R");
     cvui::text(frame, frame.cols - 250, 85, "D");
-    cvui::trackbar(frame, frame.cols - 245, 75, 210, &rotationDU, (double)0.0, (double)360.0);
+    cvui::trackbar(frame, frame.cols - 245, 75, 210, &rotationDU, (double)0.0, (double)180.0);
     cvui::text(frame, frame.cols - 30, 85, "U");
     cvui::text(frame, frame.cols - 250, 115, "Distance");
     cvui::trackbar(frame, frame.cols - 250, 125, 220, &zoom, (double)1.0, (double)100.0);
@@ -194,6 +195,14 @@ int main(int argc, const char *argv[])
       scene.objects_.erase(scene.objects_.begin());
       scene.objects_.push_back(quadric);
       scene.camera_->bounding_box_range_ = bboxr;
+      float lr = rotationLR * PI / 180;
+      float du = (rotationDU + 90.0) * PI / 180;
+      V3 v = V3((-sin(lr)) * cos(du), cos(lr) * cos (du), sin(du)).unit();
+      scene.camera_->origin_coord_ = v * (-zoom);
+      float s = zoom / 5.0;
+      scene.camera_->plane_height_ = 2.0 * s;
+      scene.camera_->plane_width_ = 3.0 * s;
+      scene.lights_.at(0)->origin_coord_ = v * (-bboxr - 2.5);
 
       Image image(width, height);
 
