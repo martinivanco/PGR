@@ -5,9 +5,6 @@
 #include <map>
 
 #include "scene.h"
-#include "sphere.h"
-#include "triangle.h"
-#include "plane.h"
 #include "quadric.h"
 
 void readTo(std::istream& file, V3* destination) {
@@ -59,33 +56,6 @@ void initSceneFromFile(std::istream& file, Scene* scene, int* width, int* height
       readTo(file, &light->intensity_);
       readTo(file, &light->radius_);
       scene->lights_.push_back(light);
-    }
-    else if (directive == "sphere") {
-      V3 origin;
-      float radius;
-      std::string material_name;
-      readTo(file, &origin);
-      file >> radius;
-      file >> material_name;
-      scene->objects_.push_back(new Sphere(origin, radius, materials[material_name]));
-    }
-    else if (directive == "plane") {
-      V3 origin;
-      V3 normal;
-      std::string material_name;
-      readTo(file, &origin);
-      readTo(file, &normal);
-      file >> material_name;
-      scene->objects_.push_back(new Plane(origin, normal, materials[material_name]));
-    }
-    else if (directive == "triangle") {
-      std::string material_name;
-      V3 p0, p1, p2;
-      readTo(file, &p0);
-      readTo(file, &p1);
-      readTo(file, &p2);
-      file >> material_name;
-      scene->objects_.push_back(new Triangle(p0, p1, p2, materials[material_name]));
     }
     else if (directive == "quadric") {
       V3 origin;

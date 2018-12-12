@@ -1,10 +1,6 @@
 #include <map>
 
 #include "scene.h"
-#include "sphere.h"
-#include "plane.h"
-#include "triangle.h"
-#include "quadric.h"
 
 namespace {
 V3 randomUnit() {

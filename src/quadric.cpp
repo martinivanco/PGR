@@ -59,35 +59,37 @@ Intersection Quadric::intersect(Ray ray) {
     if (t > 0) {
       V3 hitpoint = ray.origin_coord_ + ray.direction_unit_vec_ * t;
       if (check_bounding_box(hitpoint)) {
-        V3 normal;
-        switch (quadric_type_) {
-            case 1:
-              normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), 1, 1);
-              break;
-            case 2:
-              normal = count_norm_type2(hitpoint.x(), hitpoint.y(), param_vec_.x(), param_vec_.y(), 1);
-              break;
-            case 3:
-              normal = count_norm_type2(hitpoint.x(), hitpoint.y(), param_vec_.x(), param_vec_.y(), -1);
-              break;
-            case 4:
-              normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), -1, 1);
-              break;
-            case 5:
-              normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), -1, -1);
-              break;
-            case 6:
-              normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), -1, 0);
-              break;
-            case 7:
-              normal = count_norm_type3(hitpoint.x(), hitpoint.y(), param_vec_.x(), param_vec_.y(), 1);
-              break;
-            case 8:
-              normal = count_norm_type3(hitpoint.x(), hitpoint.y(), param_vec_.x(), param_vec_.y(), -1);
-              break;
-            default:
-              normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), 1, 1);
-              break;
+        V3 normal = V3(1, 1, 1);
+        if (material_->kDiffuse > 0) {
+          switch (quadric_type_) {
+              case 1:
+                normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), 1, 1);
+                break;
+              case 2:
+                normal = count_norm_type2(hitpoint.x(), hitpoint.y(), param_vec_.x(), param_vec_.y(), 1);
+                break;
+              case 3:
+                normal = count_norm_type2(hitpoint.x(), hitpoint.y(), param_vec_.x(), param_vec_.y(), -1);
+                break;
+              case 4:
+                normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), -1, 1);
+                break;
+              case 5:
+                normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), -1, -1);
+                break;
+              case 6:
+                normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), -1, 0);
+                break;
+              case 7:
+                normal = count_norm_type3(hitpoint.x(), hitpoint.y(), param_vec_.x(), param_vec_.y(), 1);
+                break;
+              case 8:
+                normal = count_norm_type3(hitpoint.x(), hitpoint.y(), param_vec_.x(), param_vec_.y(), -1);
+                break;
+              default:
+                normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), 1, 1);
+                break;
+          }
         }
         intersection.happened_ = true;
         intersection.contact_coord_ = hitpoint;

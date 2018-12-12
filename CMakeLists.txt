@@ -18,11 +18,8 @@ include_directories(src/third-party/libpng
 add_executable(raytracer src/image.cpp
 					     src/input_format.cpp
 					     src/main.cpp
-					     src/plane.cpp
 					     src/scene.cpp
 					     src/scene_base.cpp
-					     src/sphere.cpp
 					     src/quadric.cpp
-					     src/triangle.cpp
 					     src/v3.cpp)
 target_link_libraries(raytracer LINK_PUBLIC png16_static)
