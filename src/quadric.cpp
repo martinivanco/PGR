@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "quadric.h"
 #include "stdio.h"
 
