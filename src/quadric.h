@@ -9,6 +9,7 @@ class Quadric : public SceneObject {
   void change_type(int new_type);
   void change_param_vec_(V3 new_param_vec_);
   void change_material(Material *new_material);
+  void change_bounding_box_range(double new_range);
 
  private:
   void count_eq_type1(Ray ray, int e1, int e2, float *ax, float *bx, float *cx);

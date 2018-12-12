@@ -178,3 +178,7 @@ void Quadric::change_param_vec_(V3 new_param_vec_){
 void Quadric::change_material(Material *new_material) {
   material_ = new_material;
 }
+
+void Quadric::change_bounding_box_range(double new_range) {
+  bounding_box_range_ = new_range;
+}

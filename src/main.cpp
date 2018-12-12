@@ -190,8 +190,10 @@ int main(int argc, const char *argv[])
       quadric->change_type(type);
       quadric->change_param_vec_(V3(avalue, bvalue, cvalue));
       quadric->change_material(get_material(lighting, checkerboard, contours));
+      quadric->change_bounding_box_range(bboxr);
       scene.objects_.erase(scene.objects_.begin());
       scene.objects_.push_back(quadric);
+      scene.camera_->bounding_box_range_ = bboxr;
 
       Image image(width, height);
 
