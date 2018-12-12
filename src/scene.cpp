@@ -45,34 +45,39 @@ float Scene::signAbs(float v, float s) {
   return -v + s;
 }
 
-Color Scene::getHeightColor(V3 p) {
+Color Scene::qColor(V3 p, int type) {
   float h = p.z();
   float r = camera_->bounding_box_range_;
   float d = r / 5;
-  Color l = Color (0, 0, 0);
+  Color l = Color (0.0, 0.0, 0.0);
 
-  // if (fmod(abs(h - (r / 8)), r / 4) < 0.02 || fmod(abs(p.x()), r / 4) < 0.02)
-  //   return Color(0, 0, 0);
-  if (((int) (signAbs(p.x(), d) / d)) % 2 != ((int) (signAbs(p.y(), d) / d)) % 2)
-    l = Color(0.25, 0.25, 0.25);
+  if (type == 2 || type == 4) {
+    if (((int) (signAbs(p.x(), d) / d)) % 2 != ((int) (signAbs(p.y(), d) / d)) % 2)
+      l = Color(0.25, 0.25, 0.25);
+  }
 
-  // if (h < -r) {
-  //   return Color(1.0, 0.5, 0.25);
-  // } else if (h < 0.0) {
-  //   return Color(0.5 + ((-h) / r / 2.0), 1.0 - ((-h) / r / 2.0), 0.25);
-  // } else if (h < r) {
-  //   return Color(0.5, 1.0, 0.25 + (h / r / 4.0 * 3.0));
-  // } else {
-  //   return Color(0.5, 1.0, 1.0);
-  // }
-  if (h < -r) {
-    return Color(0.75, 0.25, 0.0) + l;
-  } else if (h < 0.0) {
-    return Color(0.25 + ((-h) / r / 2.0), 0.75 - ((-h) / r / 2.0), 0.0) + l;
-  } else if (h < r) {
-    return Color(0.25, 0.75, (h / r / 4.0 * 3.0)) + l;
+  if (type == 1 || type == 2) {
+    if (h < -r) {
+      return Color(0.75, 0.25, 0.0) + l;
+    } else if (h < 0.0) {
+      return Color(0.25 + ((-h) / r / 2.0), 0.75 - ((-h) / r / 2.0), 0.0) + l;
+    } else if (h < r) {
+      return Color(0.25, 0.75, (h / r / 4.0 * 3.0)) + l;
+    } else {
+      return Color(0.25, 0.75, 0.75) + l;
+    }
   } else {
-    return Color(0.25, 0.75, 0.75) + l;
+    int c = (int) (h / d);
+    if (h < 0) c--;
+    if (c < -5) {
+      return Color(0.75, 0.25, 0.0) + l;
+    } else if (c < 0) {
+      return Color(0.25 + ((-c) * d / r / 2.0), 0.75 - ((-c) * d / r / 2.0), 0.0) + l;
+    } else if (c < 5) {
+      return Color(0.25, 0.75, (c * d / r / 4.0 * 3.0)) + l;
+    } else {
+      return Color(0.25, 0.75, 0.75) + l;
+    }
   }
 }
 
@@ -92,16 +97,15 @@ Color Scene::trace(Ray ray, int reflection_count) {
 
   // Calculate ambient
   Color ambient;
-  switch (material->type) {
-    case 1:
-      result = getHeightColor(intersection.contact_coord_) * material->kAmbient;
-      result.clamp();
-      ambient = result;
-    case 2:
-      break;
-    default:
-      ambient = ambient_ * material->kAmbient;
-      break;
+  if (material->type == 0) {
+    ambient = ambient_ * material->kAmbient;
+  } else {
+    ambient = qColor(intersection.contact_coord_, material->type)  * material->kAmbient;
+  }
+
+  if (material->kDiffuse <= 0) {
+    ambient.clamp();
+    return ambient;
   }
 
   // Calculate diffuse and specular
@@ -140,32 +144,7 @@ Color Scene::trace(Ray ray, int reflection_count) {
     specular = specular / static_cast<float>(softlight_steps);
   }
 
-  // Calculate ambient occlusion
-  Color occlusion(0, 0, 0);
-  if (occlusion_enabled_) {
-    float occlusion_amount = 1.0f;
-    const float occlusion_step = 1.0f / occlusion_quality_;
-    for (int i = 0; i < occlusion_quality_; ++i) {
-      V3 random_dir = randomUnit();
-      random_dir = random_dir.unit();
-      if (random_dir.dot(intersection.normal_unit_vec_) < 0)
-        random_dir = -random_dir;
-      Ray occlusion_ray(intersection.contact_coord_, random_dir);
-      SceneObject* occlusion_object;
-      Intersection occlusion_intersection;
-      if (getFirstObject(occlusion_ray, &occlusion_object, &occlusion_intersection)) {
-        occlusion_amount -= occlusion_step;
-      }
-    }
-    occlusion = material->cDiffuse * occlusion_amount * material->kOcclusion;
-  }
-
-  // Calculate reflection
-  Color reflection = trace(Ray(intersection.contact_coord_, reflected.unit()), reflection_count + 1)
-      * material->cReflection
-      * material->kReflection;
-
-  result = ambient + diffuse + specular + occlusion + reflection;
+  result = ambient + diffuse + specular;
   result.clamp();
   return result;
 }

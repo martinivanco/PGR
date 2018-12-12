@@ -23,6 +23,6 @@ class Scene {
 
  private:
   bool getFirstObject(Ray ray, SceneObject** object, Intersection* intersection);
-  Color getHeightColor(V3 p);
+  Color qColor(V3 p, int type);
   float signAbs(float v, float d);
 };
