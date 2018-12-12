@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 project (raytracer)
-SET(CMAKE_CXX_FLAGS "-std=c++11 -O3")
+set(CMAKE_CXX_FLAGS "-std=c++11 -O3")
+find_package( OpenCV REQUIRED )
 
 add_subdirectory(src/third-party/zlib)
 set(ZLIB_LIBRARY zlibstatic)
@@ -22,4 +23,4 @@ add_executable(raytracer src/image.cpp
 					     src/scene_base.cpp
 					     src/quadric.cpp
 					     src/v3.cpp)
-target_link_libraries(raytracer LINK_PUBLIC png16_static)
+target_link_libraries(raytracer LINK_PUBLIC png16_static ${OpenCV_LIBS})

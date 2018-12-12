@@ -6,6 +6,8 @@ class Quadric : public SceneObject {
  public:
   Quadric(V3 origin_coord, V3 param_vec, int quadric_type, Material* material, float bounding_box_range);
   Intersection intersect(Ray ray);
+  void change_type(int new_type);
+  void change_param_vec_(V3 new_param_vec_);
 
  private:
   void count_eq_type1(Ray ray, int e1, int e2, float *ax, float *bx, float *cx);

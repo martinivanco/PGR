@@ -165,3 +165,11 @@ bool Quadric::check_bounding_box(V3 p) {
          p.y() > -bounding_box_range_ && p.y() < bounding_box_range_ && \
          p.z() > -bounding_box_range_ && p.z() < bounding_box_range_;
 }
+
+void Quadric::change_type(int new_type){
+  quadric_type_ = new_type;
+}
+
+void Quadric::change_param_vec_(V3 new_param_vec_){
+  param_vec_ = new_param_vec_;
+}
