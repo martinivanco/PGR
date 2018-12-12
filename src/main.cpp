@@ -49,6 +49,29 @@ int checktype(int type, bool checked1, bool checked2, bool checked3, bool checke
   return type;
 }
 
+V3 get_example(int type){
+    switch (type) {
+      case 1:
+        return V3(4,2,2);
+      case 2:
+        return V3(1,2,0);
+      case 3:
+        return V3(2,2,2);
+      case 4:
+        return V3(0.6,1.5,1.7);
+      case 5:
+        return V3(1,2.3,2);
+      case 6:
+        return V3(1,2.1,3.6);
+      case 7:
+        return V3(1.7,3.8,0);
+      case 8:
+        return V3(1.8,1.5,0);
+      default:
+        return V3(2,2,2);
+    }
+}
+
 Material* get_material(bool lighting, bool checkerboard, bool contours) {
   Material* material = new Material();
   material->cDiffuse = Color(1, 1, 1);
@@ -140,7 +163,7 @@ int main(int argc, const char *argv[])
   while (true) {
     doubleBuffer.copyTo(frame);
 
-    cvui::image(frame, 10, 10, render);
+    cvui::image(frame, 0, 0, render);
     cvui::window(frame, frame.cols - 260, 10, 250, 165, "Camera");
     cvui::text(frame, frame.cols - 250, 35, "Rotation");
     cvui::text(frame, frame.cols - 250, 55, "L");
@@ -177,8 +200,7 @@ int main(int argc, const char *argv[])
     cvui::checkbox(frame, frame.cols - 250, 585, "Checkerboard", &checkerboard);
     cvui::checkbox(frame, frame.cols - 250, 605, "Contours", &contours);
 
-    if (cvui::button(frame, frame.cols - 255, 630, "&Render")) {
-      outfile_name = "render_scene.png";
+    if (cvui::button(frame, frame.cols - 260.5, 630, "&Render")) {
       quadric->change_type(type);
       quadric->change_param_vec_(V3(avalue, bvalue, cvalue));
       quadric->change_material(get_material(lighting, checkerboard, contours));
@@ -199,8 +221,30 @@ int main(int argc, const char *argv[])
       cv::cvtColor(image.get_mat(), render, cv::COLOR_BGRA2RGB);
     }
 
-    if (cvui::button(frame, frame.cols - 80, 630, "&Quit")) {
+    if (cvui::button(frame, frame.cols - 75, 630, "&Quit")) {
       break;
+    }
+
+    if (cvui::button(frame, frame.cols - 169, 630, "&Sample")) {
+      quadric->change_type(type);
+      V3 example = get_example(type);
+      quadric->change_param_vec_(example);
+      quadric->change_material(get_material(lighting, checkerboard, contours));
+      quadric->change_bounding_box_range(bboxr);
+      scene.objects_.erase(scene.objects_.begin());
+      scene.objects_.push_back(quadric);
+      scene.camera_->bounding_box_range_ = bboxr;
+      float lr = rotationLR * PI / 180;
+      float du = (rotationDU + 90.0) * PI / 180;
+      V3 v = V3((-sin(lr)) * cos(du), cos(lr) * cos (du), sin(du)).unit();
+      scene.camera_->origin_coord_ = v * (-zoom);
+      float s = zoom / 5.0;
+      scene.camera_->plane_height_ = 2.0 * s;
+      scene.camera_->plane_width_ = 3.0 * s;
+      scene.lights_.at(0)->origin_coord_ = v * (-bboxr - 2.5);
+
+      scene.render(&image, width, height);
+      cv::cvtColor(image.get_mat(), render, cv::COLOR_BGRA2RGB);
     }
 
     type = checktype(type, checked1, checked2, checked3, checked4, checked5, checked6, checked7, checked8);
