@@ -174,3 +174,7 @@ void Quadric::change_type(int new_type){
 void Quadric::change_param_vec_(V3 new_param_vec_){
   param_vec_ = new_param_vec_;
 }
+
+void Quadric::change_material(Material *new_material) {
+  material_ = new_material;
+}

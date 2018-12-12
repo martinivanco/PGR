@@ -48,6 +48,38 @@ int checktype(int type, bool checked1, bool checked2, bool checked3, bool checke
   return type;
 }
 
+Material* get_material(bool lighting, bool checkerboard, bool contours) {
+  Material* material = new Material();
+  material->cDiffuse = Color(1, 1, 1);
+  material->cReflection = Color(1, 1, 1);
+  material->cSpecular = Color(1, 1, 1);
+  material->kOcclusion = 0;
+  material->kReflection = 0;
+  
+  if (lighting) {
+    material->kAmbient = 0.8;
+    material->kDiffuse = 0.6;
+    material->kSpecular = 1.5;
+    material->shininess = 75;
+  } else {
+    material->kAmbient = 1;
+    material->kDiffuse = 0;
+    material->kSpecular = 0;
+    material->shininess = 0;
+  }
+
+  material->type = 1;
+  if (checkerboard && contours) {
+    material->type = 4;
+  } else if (contours) {
+    material->type = 3;
+  } else if (checkerboard) {
+    material->type = 2;
+  }
+  
+  return material;
+}
+
 int main(int argc, const char *argv[])
 {
   std::string infile_name = "default_scene.txt";
@@ -81,7 +113,7 @@ int main(int argc, const char *argv[])
   image.save(outfile_name);
 
 
-  cv::Mat frame = cv::Mat(648, 1152, CV_8UC3);
+  cv::Mat frame = cv::Mat(660, 1150, CV_8UC3);
   //frame = cv::Scalar(49, 52, 49);
   cv::Mat render = cv::imread("sample_scene.png");
 
@@ -100,36 +132,64 @@ int main(int argc, const char *argv[])
   bool checked7 = false;
   bool checked8 = false;
 
+  bool lighting = true;
+  bool checkerboard = false;
+  bool contours = false;
+
   double avalue = 2;
   double bvalue = 2;
   double cvalue = 2;
+
+  double rotationLR = 180;
+  double rotationDU = 180;
+  double zoom = 30;
+  double bboxr = 4;
 
   while (true) {
     doubleBuffer.copyTo(frame);
 
     cvui::image(frame, 10, 10, render);
-    cvui::window(frame, frame.cols - 260, 10, 250, 377, "Settings");
-    cvui::text(frame, frame.cols - 250, 40, "Type of quadric");
-    cvui::checkbox(frame, frame.cols - 250, 60, "Ellipsoid", &checked1);
-    cvui::checkbox(frame, frame.cols - 250, 80, "Elliptic paraboloid", &checked2);
-    cvui::checkbox(frame, frame.cols - 250, 100, "Hyperbolic paraboloid", &checked3);
-    cvui::checkbox(frame, frame.cols - 250, 120, "Elliptic hyperboloid of one sheet", &checked4);
-    cvui::checkbox(frame, frame.cols - 250, 140, "Elliptic hyperboloid of two sheets", &checked5);
-    cvui::checkbox(frame, frame.cols - 250, 160, "Elliptic cone", &checked6);
-    cvui::checkbox(frame, frame.cols - 250, 180, "Elliptic cylinder", &checked7);
-    cvui::checkbox(frame, frame.cols - 250, 200, "Hyperbolic cylinder", &checked8);
+    cvui::window(frame, frame.cols - 260, 10, 250, 165, "Camera");
+    cvui::text(frame, frame.cols - 250, 35, "Rotation");
+    cvui::text(frame, frame.cols - 250, 55, "L");
+    cvui::trackbar(frame, frame.cols - 245, 45, 210, &rotationLR, (double)0.0, (double)360.0);
+    cvui::text(frame, frame.cols - 30, 55, "R");
+    cvui::text(frame, frame.cols - 250, 85, "D");
+    cvui::trackbar(frame, frame.cols - 245, 75, 210, &rotationDU, (double)0.0, (double)360.0);
+    cvui::text(frame, frame.cols - 30, 85, "U");
+    cvui::text(frame, frame.cols - 250, 115, "Distance");
+    cvui::trackbar(frame, frame.cols - 250, 125, 220, &zoom, (double)1.0, (double)100.0);
 
-    cvui::text(frame, frame.cols - 252, 238, "a");
-    cvui::trackbar(frame, frame.cols - 240, 225, 220, &avalue, (double)0.0, (double)10.0);
-    cvui::text(frame, frame.cols - 252, 273, "b");
-    cvui::trackbar(frame, frame.cols - 240, 260, 220, &bvalue, (double)0.0, (double)10.0);
-    cvui::text(frame, frame.cols - 252, 306, "c");
-    cvui::trackbar(frame, frame.cols - 240, 295, 220, &cvalue, (double)0.0, (double)10.0);
+    cvui::window(frame, frame.cols - 260, 180, 250, 355, "Quadric");
+    cvui::text(frame, frame.cols - 250, 205, "Type");
+    cvui::checkbox(frame, frame.cols - 250, 220, "Ellipsoid", &checked1);
+    cvui::checkbox(frame, frame.cols - 250, 240, "Elliptic paraboloid", &checked2);
+    cvui::checkbox(frame, frame.cols - 250, 260, "Hyperbolic paraboloid", &checked3);
+    cvui::checkbox(frame, frame.cols - 250, 280, "Elliptic hyperboloid of one sheet", &checked4);
+    cvui::checkbox(frame, frame.cols - 250, 300, "Elliptic hyperboloid of two sheets", &checked5);
+    cvui::checkbox(frame, frame.cols - 250, 320, "Elliptic cone", &checked6);
+    cvui::checkbox(frame, frame.cols - 250, 340, "Elliptic cylinder", &checked7);
+    cvui::checkbox(frame, frame.cols - 250, 360, "Hyperbolic cylinder", &checked8);
+    cvui::text(frame, frame.cols - 250, 385, "Parameters");
+    cvui::text(frame, frame.cols - 252, 405, "a");
+    cvui::trackbar(frame, frame.cols - 240, 395, 220, &avalue, (double)0.1, (double)10.0);
+    cvui::text(frame, frame.cols - 252, 435, "b");
+    cvui::trackbar(frame, frame.cols - 240, 425, 220, &bvalue, (double)0.1, (double)10.0);
+    cvui::text(frame, frame.cols - 252, 465, "c");
+    cvui::trackbar(frame, frame.cols - 240, 455, 220, &cvalue, (double)0.1, (double)10.0);
+    cvui::text(frame, frame.cols - 252, 495, "r");
+    cvui::trackbar(frame, frame.cols - 240, 485, 220, &bboxr, (double)0.5, (double)10.0);
 
-    if (cvui::button(frame, frame.cols - 250, 350, "&Render")) {
+    cvui::window(frame, frame.cols - 260, 540, 250, 85, "Other");
+    cvui::checkbox(frame, frame.cols - 250, 565, "Lighting", &lighting);
+    cvui::checkbox(frame, frame.cols - 250, 585, "Checkerboard", &checkerboard);
+    cvui::checkbox(frame, frame.cols - 250, 605, "Contours", &contours);
+
+    if (cvui::button(frame, frame.cols - 255, 630, "&Render")) {
       outfile_name = "render_scene.png";
       quadric->change_type(type);
       quadric->change_param_vec_(V3(avalue, bvalue, cvalue));
+      quadric->change_material(get_material(lighting, checkerboard, contours));
       scene.objects_.erase(scene.objects_.begin());
       scene.objects_.push_back(quadric);
 
@@ -146,7 +206,7 @@ int main(int argc, const char *argv[])
       render = cv::imread(outfile_name);
     }
 
-    if (cvui::button(frame, frame.cols - 86, 350, "&Quit")) {
+    if (cvui::button(frame, frame.cols - 80, 630, "&Quit")) {
       break;
     }
 
