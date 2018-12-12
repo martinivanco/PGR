@@ -10,6 +10,9 @@ class Quadric : public SceneObject {
  private:
   void count_eq_type1(Ray ray, int e1, int e2, float *ax, float *bx, float *cx);
   void count_eq_type2(Ray ray, int e1, int e2, int e3, float *ax, float *bx, float *cx);
+  V3 count_norm_type1(float hit_x, float hit_y, float hit_z, float a, float b, float c, float e1, float e2);
+  V3 count_norm_type2(float hit_x, float hit_y, float a, float b, float e);
+  V3 count_norm_type3(float hit_x, float hit_y, float a, float b, float e);
   bool check_bounding_box(V3 p);
 
   V3 origin_coord_;

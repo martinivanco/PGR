@@ -9,14 +9,14 @@ camera (10, -25, 10) (0, 0, 0) 18 12 4.0
 ambient (1, 1, 1)
 
 // light (origin) (color) intensity radius
-// light (0, 0, 2) (1, 1, 1) 7 0.2
+light (2.5, -6.25, 2.5) (1, 1, 1) 10 0.2
 
 // material material_name (diffuse_color) (reflection_color) (specular_color) kAmbient kDiffuse kOcclusion kReflection kSpecular shininess type
 material mat (1, 1, 1) (1, 1, 1) (1, 1, 1) 0.01 1.0 0.02 0.3 1.0 50 0
 // material mat2 (0.1, 0.1, 1) (1, 1, 1) (1, 1, 1) 0.01 1.0 0.02 0.3 1.0 50 0
 // material mat3 (1, 0.1, 0.1) (1, 1, 1) (1, 1, 1) 0.01 1.0 0.02 0.3 1.0 50 0
 // material mat4 (0.1, 1, 0.1) (1, 1, 1) (1, 0.1, 1) 0.01 1.0 0.02 0.3 1.0 50 0
-material heightmat (1, 1, 1) (1, 1, 1) (1, 1, 1) 0.8 0.0 0.0 0.0 0.0 0 1
+material heightmat (1, 1, 1) (1, 1, 1) (1, 1, 1) 0.5 0.5 0.0 0.0 1.5 75 1
 
 // sphere (origin) radius material_name
 // sphere (0, 0, 2) 1 mat

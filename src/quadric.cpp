@@ -59,9 +59,36 @@ Intersection Quadric::intersect(Ray ray) {
     if (t > 0) {
       V3 hitpoint = ray.origin_coord_ + ray.direction_unit_vec_ * t;
       if (check_bounding_box(hitpoint)) {
-        V3 normal = V3((hitpoint.x() - origin_coord_.x()) / (param_vec_.x() * param_vec_.x()), \
-                       (hitpoint.y() - origin_coord_.y()) / (param_vec_.y() * param_vec_.y()), \
-                       (hitpoint.z() - origin_coord_.z()) / (param_vec_.z() * param_vec_.z()));
+        V3 normal;
+        switch (quadric_type_) {
+            case 1:
+              normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), 1, 1);
+              break;
+            case 2:
+              normal = count_norm_type2(hitpoint.x(), hitpoint.y(), param_vec_.x(), param_vec_.y(), 1);
+              break;
+            case 3:
+              normal = count_norm_type2(hitpoint.x(), hitpoint.y(), param_vec_.x(), param_vec_.y(), -1);
+              break;
+            case 4:
+              normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), -1, 1);
+              break;
+            case 5:
+              normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), -1, -1);
+              break;
+            case 6:
+              normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), -1, 0);
+              break;
+            case 7:
+              normal = count_norm_type3(hitpoint.x(), hitpoint.y(), param_vec_.x(), param_vec_.y(), 1);
+              break;
+            case 8:
+              normal = count_norm_type3(hitpoint.x(), hitpoint.y(), param_vec_.x(), param_vec_.y(), -1);
+              break;
+            default:
+              normal = count_norm_type1(hitpoint.x(), hitpoint.y(), hitpoint.z(), param_vec_.x(), param_vec_.y(), param_vec_.z(), 1, 1);
+              break;
+        }
         intersection.happened_ = true;
         intersection.contact_coord_ = hitpoint;
         intersection.normal_unit_vec_ = normal.unit();
@@ -111,6 +138,24 @@ void Quadric::count_eq_type2(Ray ray, int e1, int e2, int e3, float *ax, float *
   *cx = (ray.origin_coord_.x() * ray.origin_coord_.x() + origin_coord_.x() * origin_coord_.x() - 2 * ray.origin_coord_.x() * origin_coord_.x()) * b2 + \
         (ray.origin_coord_.y() * ray.origin_coord_.y() + origin_coord_.y() * origin_coord_.y() - 2 * ray.origin_coord_.y() * origin_coord_.y()) * a2 * e1 + \
         (ray.origin_coord_.z() - origin_coord_.z()) * ab2 * e2 - ab2 * e3;
+}
+
+V3 Quadric::count_norm_type1(float hit_x, float hit_y, float hit_z, float a, float b, float c, float e1, float e2) {
+  float r = sqrt(abs(e1 * e2 - (e1 * hit_x * hit_x / (a * a)) - (e1 * hit_y * hit_y / (b * b))));
+  V3 result = V3(1, 0, ((-e1) * c * hit_x) / (a * a * r)).cross(V3(0, 1, ((-e1) * c * hit_y) / (b * b * r)));
+  float e3 = hit_z < 0 ? -1 : 1;
+  return V3(result.x(), result.y(), e3 * result.z());
+}
+
+V3 Quadric::count_norm_type2(float hit_x, float hit_y, float a, float b, float e) {
+  return V3(1, 0, 2 * hit_x / (a * a)).cross(V3(0, 1, (e * 2) * hit_y / (b * b)));
+}
+
+V3 Quadric::count_norm_type3(float hit_x, float hit_y, float a, float b, float e) {
+  float r = sqrt(abs(e - e * hit_x * hit_x / (a * a)));
+  V3 result = V3((-e) * b * hit_x / (a * a * r), -1, 0);
+  float e2 = hit_y < 0 ? -1 : 1;
+  return V3(e2 * result.x(), result.y(), result.z());
 }
 
 bool Quadric::check_bounding_box(V3 p) {

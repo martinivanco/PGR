@@ -96,7 +96,7 @@ Color Scene::trace(Ray ray, int reflection_count) {
     case 1:
       result = getHeightColor(intersection.contact_coord_) * material->kAmbient;
       result.clamp();
-      return result;
+      ambient = result;
     case 2:
       break;
     default:
@@ -130,8 +130,7 @@ Color Scene::trace(Ray ray, int reflection_count) {
       falloff *= falloff;
         
       float diffusion = intersection.normal_unit_vec_.dot((light_origin - intersection.contact_coord_).unit());
-      if (diffusion > 0)
-        diffuse += light->color_ * material->cDiffuse * material->kDiffuse * light->intensity_ * diffusion * (1 / falloff);
+      diffuse += light->color_ * material->cDiffuse * material->kDiffuse * light->intensity_ * abs(diffusion) * (1 / falloff);
 
       float specularity = reflected.dot(-lightray.direction_unit_vec_);
       if (specularity > 0) 
