@@ -102,21 +102,12 @@ int main(int argc, const char *argv[])
     return -1;
   }
 
-  Image image(width, height);
-
-  std::cout << "Rendering..." << std::endl;
-  
-  time_t start = time(0);
-  scene.render(&image, width, height);
-  std::cout << "Rendering finished in " << difftime(time(0), start) << " seconds." << std::endl;
-
-  std::cout << "Writing to " << outfile_name << "." << std::endl;
-  image.save(outfile_name);
-
-
   cv::Mat frame = cv::Mat(660, 1150, CV_8UC3);
-  //frame = cv::Scalar(49, 52, 49);
-  cv::Mat render = cv::imread("sample_scene.png");
+  cv::Mat render = cv::Mat(600, 900, CV_8UC3);
+
+  Image image(width, height);
+  scene.render(&image, width, height);
+  cv::cvtColor(image.get_mat(), render, cv::COLOR_BGRA2RGB);
 
   cv::Mat doubleBuffer = frame.clone();
   int trackbarWidth = 130;
@@ -204,17 +195,8 @@ int main(int argc, const char *argv[])
       scene.camera_->plane_width_ = 3.0 * s;
       scene.lights_.at(0)->origin_coord_ = v * (-bboxr - 2.5);
 
-      Image image(width, height);
-
-      std::cout << "Rendering..." << std::endl;
-      
-      time_t start = time(0);
       scene.render(&image, width, height);
-      std::cout << "Rendering finished in " << difftime(time(0), start) << " seconds." << std::endl;
-
-      std::cout << "Writing to " << outfile_name << "." << std::endl;
-      image.save(outfile_name);
-      render = cv::imread(outfile_name);
+      cv::cvtColor(image.get_mat(), render, cv::COLOR_BGRA2RGB);
     }
 
     if (cvui::button(frame, frame.cols - 80, 630, "&Quit")) {

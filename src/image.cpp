@@ -2,7 +2,6 @@
 #include <vector>
 
 #include "image.h"
-#include "png.h"
 
 Image::Image(int width, int height) {
   buffer_ = new uint32_t[width * height];
@@ -27,20 +26,6 @@ void Image::set(int x, int y, unsigned char r, unsigned char g, unsigned char b,
   components[3] = a;
 }
 
-void Image::save(std::string filename) {
-  FILE* file = fopen(filename.c_str(), "wb");
-  png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  png_init_io(png_ptr, file);
-
-  png_infop info_ptr = png_create_info_struct(png_ptr);
-  png_set_IHDR(png_ptr, info_ptr, width_, height_,
-               8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE,
-               PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
-  png_write_info(png_ptr, info_ptr);
-
-  for (int i = 0; i < height_; ++i)
-    png_write_row(png_ptr, reinterpret_cast<png_const_bytep>(buffer_ + i * width_));
-
-  png_write_end(png_ptr, NULL);
-  fclose(file);
+cv::Mat Image::get_mat() {
+  return cv::Mat(height_, width_, CV_8UC4, buffer_);
 }

@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <string>
+#include <opencv2/core/core.hpp>
 
 class Image {
  public:
@@ -10,7 +11,7 @@ class Image {
 
   uint32_t& at(int x, int y);
   void set(int x, int y, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-  void save(std::string filename);
+  cv::Mat get_mat();
 
  private:
   uint32_t* buffer_;
