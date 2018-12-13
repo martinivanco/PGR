@@ -123,7 +123,7 @@ int main(int argc, const char *argv[])
   }
 
   cv::Mat frame = cv::Mat(660, 1150, CV_8UC3);
-  cv::Mat render = cv::Mat(600, 900, CV_8UC3);
+  cv::Mat render = cv::Mat(660, 880, CV_8UC3);
 
   Image image(width, height);
   scene.render(&image, width, height);

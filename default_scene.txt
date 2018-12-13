@@ -24,4 +24,4 @@ quadric (0, 0, 0) (2, 2, 2) 3 qmat3
 qualityparams 0 20 20
 
 // render width height outfile
-render 900 600 sample_scene.png
+render 880 660 sample_scene.png
