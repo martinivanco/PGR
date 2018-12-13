@@ -1,21 +1,18 @@
 #include <vector>
 #include <fstream>
-
 #include <ctime>
+#include <iostream>
+#include <typeinfo>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 #include "v3.h"
 #include "scene_base.h"
 #include "image.h"
 #include "input_format.h"
 #include "quadric.h"
-
-#include <iostream>
-#include <typeinfo>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
 #define CVUI_IMPLEMENTATION
-#include "third-party/cvui/cvui.h"
+#include "cvui.h"
 
 #define WINDOW_NAME "DQUR - Displaying quadrics using raytracing"
 #define PI 3.14159265

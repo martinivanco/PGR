@@ -4,10 +4,10 @@ The task was to create a program capable of displaying various quadrics using ra
 Authors: Martin Ivanco, Petr Buchal
 
 ## How to run:
-1. Open up terminal
-2. Type ./run.sh
+1. Make sure you have OpenCV and CMake installed
+2. Open up this project terminal and type ./run.sh
 3. ???
 4. Profit!
 
 ## About
-This application is based on a simple-raytracer by cem: https://github.com/cem/simple-raytracer
+This application is based on simple-raytracer by cem (https://github.com/cem/simple-raytracer) and cvui by Dovyski (https://github.com/Dovyski/cvui)

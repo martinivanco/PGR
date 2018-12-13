@@ -1,5 +1,3 @@
-#pragma once
-
 #include "scene_base.h"
 
 #include <cmath>

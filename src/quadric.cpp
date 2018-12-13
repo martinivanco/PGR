@@ -60,6 +60,8 @@ Intersection Quadric::intersect(Ray ray) {
     if (t > 0) {
       V3 hitpoint = ray.origin_coord_ + ray.direction_unit_vec_ * t;
       if (check_bounding_box(hitpoint)) {
+        
+        // Select type of quadric and count normal if it is needed 
         V3 normal = V3(1, 1, 1);
         if (material_->kDiffuse > 0) {
           switch (quadric_type_) {
