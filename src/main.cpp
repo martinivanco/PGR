@@ -225,12 +225,22 @@ int main(int argc, const char *argv[])
     if (cvui::button(frame, frame.cols - 169, 630, "&Sample")) {
       quadric->change_type(type);
       V3 example = get_example(type);
+      avalue = example.x();
+      bvalue = example.y();
+      cvalue = example.z();
       quadric->change_param_vec_(example);
+      lighting = true;
+      checkerboard = true;
+      contours = false;
       quadric->change_material(get_material(lighting, checkerboard, contours));
+      bboxr = 4.0;
       quadric->change_bounding_box_range(bboxr);
       scene.objects_.erase(scene.objects_.begin());
       scene.objects_.push_back(quadric);
       scene.camera_->bounding_box_range_ = bboxr;
+      rotationLR = 200.0;
+      rotationDU = 120.0;
+      zoom = 30.0;
       float lr = rotationLR * PI / 180;
       float du = (rotationDU + 90.0) * PI / 180;
       V3 v = V3((-sin(lr)) * cos(du), cos(lr) * cos (du), sin(du)).unit();
